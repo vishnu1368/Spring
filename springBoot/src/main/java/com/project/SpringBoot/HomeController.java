@@ -13,7 +13,7 @@ If you want to do with @Controller, then instead of returning the layout. You ca
 @Controller
 public class HomeController {
 
-    @RequestMapping("/")
+    @RequestMapping("/hello")
     public String hello(){
         return "hello.html";
     }
