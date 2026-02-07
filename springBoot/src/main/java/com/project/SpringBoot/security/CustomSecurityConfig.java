@@ -1,5 +1,6 @@
 package com.project.SpringBoot.security;
 
+import com.project.SpringBoot.filter.JWTFilter;
 import com.project.SpringBoot.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +25,9 @@ public class CustomSecurityConfig {
     @Autowired
     private MyUserDetailsService userDetailService;
 
+    @Autowired
+    private JWTFilter JWTFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(customizer -> customizer.disable())
@@ -30,7 +35,8 @@ public class CustomSecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(JWTFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
         /*
         • Spring Security won't store any session server-side, so authentication happens every request.

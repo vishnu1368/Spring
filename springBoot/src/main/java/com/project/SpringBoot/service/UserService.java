@@ -19,9 +19,12 @@ public class UserService {
     @Autowired
     private AuthenticationManager authmanager;
 
+    @Autowired
+    private JWTService JwtService;
+
     public String verify(Users users) {
         Authentication auth = authmanager.authenticate(new UsernamePasswordAuthenticationToken(users.getName(), users.getPassword()));
-        if(auth.isAuthenticated()) return "Sucess";
+        if(auth.isAuthenticated()) return JwtService.getToken(users.getName());
         return "fail";
     }
 
