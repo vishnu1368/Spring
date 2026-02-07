@@ -3,6 +3,9 @@ package com.project.SpringBoot.service;
 import com.project.SpringBoot.model.Users;
 import com.project.SpringBoot.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +16,14 @@ public class UserService {
     @Autowired
     private UserRepo userRepo;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(11);
+    @Autowired
+    private AuthenticationManager authmanager;
+
+    public String verify(Users users) {
+        Authentication auth = authmanager.authenticate(new UsernamePasswordAuthenticationToken(users.getName(), users.getPassword()));
+        if(auth.isAuthenticated()) return "Sucess";
+        return "fail";
+    }
 
     public Users register(Users user){
         user.setPassword(encoder.encode(user.getPassword()));
