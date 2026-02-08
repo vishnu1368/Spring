@@ -29,5 +29,6 @@ This is the Aggregator POM.
 <modules>
     <module>SpringBoot</module>
     <module>Hibernate</module>
+    <module>Auth</module>
 </modules>
 </project>
