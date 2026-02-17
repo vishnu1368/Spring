@@ -1,0 +1,95 @@
+🔹 What Happens at Startup (Step-by-Step)
+
+When your application starts:
+1️⃣ Spring Boot starts the ApplicationContext
+2️⃣ It scans for configuration classes
+    It finds your class annotated with @Configuration.
+3️⃣ It finds @Bean methods
+    It sees:
+        @Bean
+        public MessageConverter convert()
+
+        @Bean
+        public AmqpTemplate getTemplate(ConnectionFactory connection)
+4️⃣ Spring calls those methods
+Spring executes:
+    and stores the returned objects inside the IoC container.
+    You don’t see the calls — Spring does it internally.
+
+
+
+
+================================================================================================================================================================
+
+
+🔹 What Is Actually Happening Internally
+    Spring creates a special proxy of annotations
+                @Configuration
+                @Component
+                @Service
+                @Repository
+                @Controller
+                @RestController
+
+    When the container needs a bean:
+        It checks if it already exists (singleton by default)
+        If not, it calls the method
+        Stores the returned object
+        Injects it wherever needed
+
+🔹 When Exactly Are They Called?
+    They are called:
+        During application startup — before your controllers, listeners, etc. start working.
+    Specifically:
+        Context creation phase
+        Bean instantiation phase
+        Dependency injection phase
+
+
+================================================================================================================================================================
+
+
+
+what if I'm not using @Configuration but having @Bean inside the class?
+
+🔹 Case 1: Class Has @Bean But No Spring Annotation At All
+    👉 Result:
+        ❌ Spring will NOT detect this class
+        ❌ @Bean method will NEVER be called
+        ❌ No bean is registered
+
+🔹 Case 2: Class Has @Component But NOT @Configuration
+    👉 Result:
+        ✅ Spring WILL detect the class
+        ✅ @Bean method WILL be processed
+        ⚠ BUT important difference exists
+
+    This is called "Lite mode" configuration.
+
+🔹 What Is the Difference?
+    There are two modes:
+
+    1️⃣ Full Mode (@Configuration)
+
+        Spring creates a CGLIB proxy of the class.
+        This ensures:
+            @Bean methods return singleton beans
+            Calling one @Bean method from another does NOT create a new object
+
+    2️⃣ Lite Mode (@Component only)
+        No CGLIB proxy.
+        If one @Bean method calls another:
+
+🔹 Internally What Happens?
+
+With @Configuration:
+Spring does:
+    Create subclass proxy using CGLIB
+    Override @Bean methods
+    Intercept calls
+    Return container-managed singleton
+
+🔥 Very Important Rule
+    If your class contains @Bean methods:
+    Always annotate it with @Configuration
+    Even though @Component works, it is not safe for complex configurations.

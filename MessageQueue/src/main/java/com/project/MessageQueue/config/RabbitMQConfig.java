@@ -37,6 +37,20 @@ public class RabbitMQConfig {
     private String json_routingKey;
 
 
+    @Value("${rabbitmq.queue.dlxexchange}")
+    private String dlx_exchange;
+
+
+    @Value("${rabbitmq.dlxqueue.name}")
+    private String dlx_queue;
+
+    @Value("${rabbitmq.dlxrouting.key}")
+    private String dlx_routingKey;
+
+
+
+
+
     //Spring Bean for rabbitmq queue
     @Bean
     public Queue queue(){
@@ -45,14 +59,33 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue jsonqueue(){
-        return new Queue(json_queue);
+        return QueueBuilder.durable(json_queue)
+                .deadLetterExchange(dlx_exchange)
+                .deadLetterRoutingKey(dlx_routingKey)
+                .build();
     }
+
+    @Bean
+    public  Queue DLXQueue(){
+        return new Queue(dlx_queue);
+    }
+
+
+
 
     //Spring Bean for rabbitmq exchange
     @Bean
     public TopicExchange exchange(){
         return new TopicExchange(exchange);
     }
+    @Bean
+    public TopicExchange DLX_exchange(){
+        return new TopicExchange(dlx_exchange);
+    }
+
+
+
+
 
     //Spring Bean for rabbitmq Binding
     @Bean
