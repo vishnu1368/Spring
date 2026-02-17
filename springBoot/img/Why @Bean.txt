@@ -1,0 +1,38 @@
+What They Actually Do
+✅ @Bean → Used to CREATE a bean
+✅ @Autowired → Used to INJECT a bean
+
+So the real question is: When should I define a bean manually using @Bean instead of relying on automatic injection?
+
+
+Use @Bean when you need to manually define how an object is created.
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+}
+
+✅ 1. You want custom configuration
+        @Bean
+        public ObjectMapper objectMapper() {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            return mapper;
+        }
+
+✅ 2. The class is from an external library
+    If the class does NOT have @Component and you cannot modify it.
+    Example:
+        ObjectMapper
+        RestTemplate
+        Third-party SDK classes
+
+✅ 3. You need multiple versions of the same type
+    @Bean
+    public DataSource mysqlDataSource() { ... }
+
+    @Bean
+    public DataSource postgresDataSource() { ... }

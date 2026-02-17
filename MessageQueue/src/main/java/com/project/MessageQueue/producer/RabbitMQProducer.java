@@ -27,6 +27,6 @@ public class RabbitMQProducer {
 
     public void send(String message){
         logger.info("Received Message : " + message);
-        rabbitTemplate.convertAndSend(exchange, queue, message);
+        rabbitTemplate.convertAndSend(exchange, routingKey, message);
     }
 }
