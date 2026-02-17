@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 public class RabbitMQJSONConsumer {
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQJSONConsumer.class);
 
+    /*
+    Spring sees:
+        Listener method expects User
+        Message has contentType=application/json
+        Message has __TypeId__ header
+     */
+
     @RabbitListener(queues = "${rabbitmq.jsonqueue.name}")
     public void getMessage(User user){
         logger.info("Consumer received the message, " + user);
