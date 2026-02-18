@@ -65,6 +65,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue jsonqueue(){
         return QueueBuilder.durable(json_queue)
+                //.quorum() -> if you want quorum queue
                 .deadLetterExchange(dlx_exchange)
                 .deadLetterRoutingKey(dlx_routingKey)
                 .build();

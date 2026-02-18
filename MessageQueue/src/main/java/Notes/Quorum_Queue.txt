@@ -1,0 +1,61 @@
+Quorum Queues
+===============
+
+Quorum queues are:
+    Distributed across multiple nodes
+    Fault tolerant
+    Strongly consistent
+    Based on Raft
+
+What happens internally:
+    One node becomes the leader
+    Other nodes become followers
+    Messages are replicated to a majority
+    Writes succeed only when majority confirms
+
+If leader node dies:
+    A follower is elected leader
+    Queue continues working
+
+So in quorum mode:
+    One logical queue is replicated across multiple nodes via Raft.
+
+
+⚠️ Important Clarification:
+
+    RabbitMQ clustering does NOT shard one queue across nodes.
+    It does:
+        Replication (quorum)
+        Leader/follower model
+    It does NOT:
+        Partition a queue like Kafka partitions
+
+
+RabbitMQ → Push-based
+    * Broker pushes messages directly to consumers.
+    * As soon as a message arrives, it can be delivered.
+
+Kafka → Pull-based
+    * Consumers poll the broker.
+    * Messages are delivered only when consumer polls.
+    * Poll interval adds latency.
+
+Typical Latency Difference:
+
+    | System   | Typical Latency |
+    | -------- | --------------- |
+    | RabbitMQ | 1–5 ms          |
+    | Kafka    | 5–20+ ms        |
+
+
+Use RabbitMQ if you need:
+    * Real-time payment processing
+    * Immediate RPC-style communication
+    * Fast task queues
+    * Low millisecond response chains
+
+Use Kafka if you need:
+    * Event streaming
+    * Analytics pipelines
+    * Replay capability
+    * Large-scale event ingestion

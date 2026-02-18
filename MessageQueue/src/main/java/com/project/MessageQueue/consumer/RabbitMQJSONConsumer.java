@@ -30,6 +30,14 @@ public class RabbitMQJSONConsumer {
         //Every message delivered to a consumer in RabbitMQ has a unique identifier per channel, called the delivery tag.
         logger.info("Consumer received the message, " + user);
         try {
+            /*
+            CHANNEL:
+            Instead of opening a new TCP connection for every producer/consumer:
+                You open one connection
+                Then create multiple channels inside it
+                Each channel can publish or consume independently
+                This makes RabbitMQ efficient and scalable.
+             */
             channel.basicAck(deliveryTag, false);
             /* What does multiple mean?
                 false → Acknowledge only this single message
