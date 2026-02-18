@@ -31,6 +31,8 @@ So in quorum mode:
         Partition a queue like Kafka partitions
 
 
+========================================================================================================================
+
 RabbitMQ → Push-based
     * Broker pushes messages directly to consumers.
     * As soon as a message arrives, it can be delivered.
@@ -59,3 +61,40 @@ Use Kafka if you need:
     * Analytics pipelines
     * Replay capability
     * Large-scale event ingestion
+
+========================================================================================================================
+
+Scenario: Multiple Consumers on the SAME Queue (Competing Consumers)
+
+@RabbitListener(queues = "mainQueue")
+public void consumer1(String msg) { }
+
+@RabbitListener(queues = "mainQueue")
+public void consumer2(String msg) { }
+
+👉 What happens?
+RabbitMQ uses round-robin distribution.
+Example:
+    Queue contains: M1,M2,M3,M4
+    Consumers: Consumer A, Consumer B
+    RabbitMQ will distribute like:
+        A → M1
+        B → M2
+        A → M3
+        B → M4
+
+This pattern is called: 🔥 Competing Consumers Pattern
+
+Used for:
+    Load balancing
+    Horizontal scaling
+    Increasing throughput
+
+Parameter to be given in application properties:
+spring.rabbitmq.listener.simple.concurrency=3
+
+========================================================================================================================
+
+Scenario: You Want ALL Consumers to Receive the SAME Message
+
+    Then you should create individual queue for each consumers
