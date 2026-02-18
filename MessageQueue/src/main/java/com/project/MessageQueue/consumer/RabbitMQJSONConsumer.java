@@ -23,12 +23,11 @@ public class RabbitMQJSONConsumer {
         Message has __TypeId__ header
      */
 
-    @RabbitListener(queues = "${rabbitmq.jsonqueue.name}")
+    @RabbitListener(queues = "${rabbitmq.jsonqueue.name}", ackMode = "MANUAL")
     public void getMessage(User user, Channel channel,
                            @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag){
 
         //Every message delivered to a consumer in RabbitMQ has a unique identifier per channel, called the delivery tag.
-
         logger.info("Consumer received the message, " + user);
         try {
             channel.basicAck(deliveryTag, false);
@@ -39,7 +38,7 @@ public class RabbitMQJSONConsumer {
         } catch (Exception e) {
             logger.error("ACK failed, attempting NACK", e);
             try {
-                channel.basicNack(deliveryTag, false, true); // true = requeue
+                channel.basicNack(deliveryTag, false, false); // requeue = [false, true]
             } catch (IOException ioException) {
                 logger.error("NACK failed", ioException);
             }

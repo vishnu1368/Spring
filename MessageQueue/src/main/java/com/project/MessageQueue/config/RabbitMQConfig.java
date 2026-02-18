@@ -58,18 +58,17 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue dlxQueue(){
+        return new Queue(dlx_queue);
+    }
+
+    @Bean
     public Queue jsonqueue(){
         return QueueBuilder.durable(json_queue)
                 .deadLetterExchange(dlx_exchange)
                 .deadLetterRoutingKey(dlx_routingKey)
                 .build();
     }
-
-    @Bean
-    public  Queue DLXQueue(){
-        return new Queue(dlx_queue);
-    }
-
 
 
 
@@ -103,6 +102,15 @@ public class RabbitMQConfig {
                 .to(exchange())
                 .with(json_routingKey);
     }
+
+    @Bean
+    public Binding dlxBinding(){
+        return BindingBuilder
+                .bind(dlxQueue())
+                .to(DLX_exchange())
+                .with(dlx_routingKey);
+    }
+
 
     @Bean
     public MessageConverter convert(){
